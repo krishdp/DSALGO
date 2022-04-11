@@ -1,0 +1,540 @@
+https://www.geeksforgeeks.org/number-subarrays-sum-exactly-equal-k/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Number of subarrays having sum exactly equal to k
+Difficulty Level : Medium
+Last Updated : 07 May, 2021
+Given an unsorted array of integers, find the number of subarrays having sum exactly equal to a given number k.
+
+Examples: 
+
+Input : arr[] = {10, 2, -2, -20, 10}, 
+        k = -10
+Output : 3
+Subarrays: arr[0...3], arr[1...4], arr[3..4]
+have sum exactly equal to -10.
+
+Input : arr[] = {9, 4, 20, 3, 10, 5},
+            k = 33
+Output : 2
+Subarrays : arr[0...2], arr[2...4] have sum
+exactly equal to 33.
+Recommended: Please try your approach on {IDE} first, before moving on to the solution.
+Naive Solution – 
+A simple solution is to traverse all the subarrays and calculate their sum. If the sum is equal to the required sum then increment the count of subarrays. Print final count of subarray. Following is the naive implementation – 
+
+C++
+
+// C++ program for
+// the above approach
+#include <bits/stdc++.h>
+using namespace std;
+int main()
+{
+  int arr[] = {10, 2, -2, -20, 10};
+  int k = -10;
+  int n = sizeof(arr) / sizeof(arr[0]);
+  int res = 0;
+ 
+  // Calculate all subarrays
+  for (int i = 0; i < n; i++)
+  {
+    int sum = 0;
+    for (int j = i; j < n; j++)
+    {
+      // Calculate required sum
+      sum += arr[j];
+ 
+      // Check if sum is equal to
+      // required sum
+      if (sum == k)
+        res++;
+    }
+  }
+  cout << (res) << endl;
+}
+ 
+// This code is contributed by Chitranayal
+Java
+
+// Java program for
+// the above approach
+import java.util.*;
+class Solution {
+     
+    public static void main(String[] args)
+    {
+        int arr[] = { 10, 2, -2, -20, 10 };
+        int k = -10;
+        int n = arr.length;
+        int res = 0;
+         
+        // calculate all subarrays
+        for (int i = 0; i < n; i++) {
+             
+            int sum = 0;
+            for (int j = i; j < n; j++) {
+                 
+                // calculate required sum
+                sum += arr[j];
+                 
+                // check if sum is equal to
+                // required sum
+                if (sum == k)
+                    res++;
+            }
+        }
+        System.out.println(res);
+    }
+}
+Python3
+
+# Python3 program for
+# the above approach
+arr = [ 10, 2, -2, -20, 10 ]
+n = len(arr)
+k = -10
+res = 0
+ 
+# Calculate all subarrays
+for i in range(n):
+    summ = 0           
+    for j in range(i, n):
+         
+        # Calculate required sum
+        summ += arr[j]
+ 
+        # Check if sum is equal to
+        # required sum
+        if summ == k:
+            res += 1
+ 
+print(res)
+ 
+# This code is contributed by kavan155gondalia
+C#
+
+// C# program for
+// the above approach
+using System;
+using System.Collections.Generic;
+class GFG {
+     
+  static void Main() {
+      int[] arr = {10, 2, -2, -20, 10};
+      int k = -10;
+      int n = arr.Length;
+      int res = 0;
+      
+      // Calculate all subarrays
+      for (int i = 0; i < n; i++)
+      {
+        int sum = 0;
+        for (int j = i; j < n; j++)
+        {
+           
+          // Calculate required sum
+          sum += arr[j];
+      
+          // Check if sum is equal to
+          // required sum
+          if (sum == k)
+            res++;
+        }
+      }
+      Console.WriteLine(res);
+  }
+}
+ 
+// This code is contributed by divyesh072019
+Javascript
+
+<script>
+     
+// Javascript program for
+// the above approach
+let arr = [ 10, 2, -2, -20, 10 ];
+let k = -10;
+let n = arr.length;
+let res = 0;
+ 
+// Calculate all subarrays
+for(let i = 0; i < n; i++)
+{
+    let sum = 0;
+    for(let j = i; j < n; j++)
+    {
+         
+        // Calculate required sum
+        sum += arr[j];
+         
+        // Check if sum is equal to
+        // required sum
+        if (sum == k)
+            res++;
+    }
+}
+document.write(res);
+ 
+// This code is contributed by suresh07
+   
+</script>
+Output: 
+3
+ 
+
+Efficient Solution – 
+An efficient solution is while traversing the array, store sum so far in currsum. Also, maintain the count of different values of currsum in a map. If the value of currsum is equal to the desired sum at any instance increment count of subarrays by one. The value of currsum exceeds the desired sum by currsum – sum. If this value is removed from currsum then the desired sum can be obtained. From the map find the number of subarrays previously found having sum equal to currsum-sum. Excluding all those subarrays from the current subarray, gives new subarrays having the desired sum. So increase count by the number of such subarrays. Note that when currsum is equal to the desired sum then also check the number of subarrays previously having a sum equal to 0. Excluding those subarrays from the current subarray gives new subarrays having the desired sum. Increase count by the number of subarrays having sum 0 in that case.
+
+
+
+C++
+
+// C++ program to find number of subarrays
+// with sum exactly equal to k.
+#include <bits/stdc++.h>
+using namespace std;
+ 
+// Function to find number of subarrays
+// with sum exactly equal to k.
+int findSubarraySum(int arr[], int n, int sum)
+{
+    // STL map to store number of subarrays
+    // starting from index zero having
+    // particular value of sum.
+    unordered_map<int, int> prevSum;
+ 
+    int res = 0;
+ 
+    // Sum of elements so far.
+    int currsum = 0;
+ 
+    for (int i = 0; i < n; i++) {
+ 
+        // Add current element to sum so far.
+        currsum += arr[i];
+ 
+        // If currsum is equal to desired sum,
+        // then a new subarray is found. So
+        // increase count of subarrays.
+        if (currsum == sum)
+            res++;
+ 
+        // currsum exceeds given sum by currsum
+        //  - sum. Find number of subarrays having
+        // this sum and exclude those subarrays
+        // from currsum by increasing count by
+        // same amount.
+        if (prevSum.find(currsum - sum) != prevSum.end())
+            res += (prevSum[currsum - sum]);
+ 
+        // Add currsum value to count of
+        // different values of sum.
+        prevSum[currsum]++;
+    }
+ 
+    return res;
+}
+ 
+int main()
+{
+    int arr[] = { 10, 2, -2, -20, 10 };
+    int sum = -10;
+    int n = sizeof(arr) / sizeof(arr[0]);
+    cout << findSubarraySum(arr, n, sum);
+    return 0;
+}
+Java
+
+// Java program to find number of subarrays
+// with sum exactly equal to k.
+import java.util.HashMap;
+import java.util.Map;
+ 
+public class GfG {
+ 
+    // Function to find number of subarrays
+    // with sum exactly equal to k.
+    static int findSubarraySum(int arr[], int n, int sum)
+    {
+        // HashMap to store number of subarrays
+        // starting from index zero having
+        // particular value of sum.
+        HashMap<Integer, Integer> prevSum = new HashMap<>();
+ 
+        int res = 0;
+ 
+        // Sum of elements so far.
+        int currsum = 0;
+ 
+        for (int i = 0; i < n; i++) {
+ 
+            // Add current element to sum so far.
+            currsum += arr[i];
+ 
+            // If currsum is equal to desired sum,
+            // then a new subarray is found. So
+            // increase count of subarrays.
+            if (currsum == sum)
+                res++;
+ 
+            // currsum exceeds given sum by currsum
+            //  - sum. Find number of subarrays having
+            // this sum and exclude those subarrays
+            // from currsum by increasing count by
+            // same amount.
+            if (prevSum.containsKey(currsum - sum))
+                res += prevSum.get(currsum - sum);
+ 
+            // Add currsum value to count of
+            // different values of sum.
+            Integer count = prevSum.get(currsum);
+            if (count == null)
+                prevSum.put(currsum, 1);
+            else
+                prevSum.put(currsum, count + 1);
+        }
+ 
+        return res;
+    }
+ 
+    public static void main(String[] args)
+    {
+ 
+        int arr[] = { 10, 2, -2, -20, 10 };
+        int sum = -10;
+        int n = arr.length;
+        System.out.println(findSubarraySum(arr, n, sum));
+    }
+}
+ 
+// This code is contributed by Rituraj Jain
+Python3
+
+# Python3 program to find the number of
+# subarrays with sum exactly equal to k.
+from collections import defaultdict
+ 
+# Function to find number of subarrays 
+# with sum exactly equal to k.
+def findSubarraySum(arr, n, Sum):
+  
+    # Dictionary to store number of subarrays
+    # starting from index zero having 
+    # particular value of sum.
+    prevSum = defaultdict(lambda : 0)
+   
+    res = 0
+   
+    # Sum of elements so far.
+    currsum = 0
+   
+    for i in range(0, n): 
+   
+        # Add current element to sum so far.
+        currsum += arr[i]
+   
+        # If currsum is equal to desired sum,
+        # then a new subarray is found. So
+        # increase count of subarrays.
+        if currsum == Sum: 
+            res += 1        
+   
+        # currsum exceeds given sum by currsum  - sum.
+        # Find number of subarrays having 
+        # this sum and exclude those subarrays
+        # from currsum by increasing count by 
+        # same amount.
+        if (currsum - Sum) in prevSum:
+            res += prevSum[currsum - Sum]
+           
+   
+        # Add currsum value to count of 
+        # different values of sum.
+        prevSum[currsum] += 1
+      
+    return res
+  
+if __name__ == "__main__":
+ 
+    arr =  [10, 2, -2, -20, 10] 
+    Sum = -10
+    n = len(arr)
+    print(findSubarraySum(arr, n, Sum))
+     
+# This code is contributed by Rituraj Jain
+C#
+
+// C# program to find number of subarrays
+// with sum exactly equal to k.
+using System;
+using System.Collections.Generic;
+ 
+class GFG {
+    // Function to find number of subarrays
+    // with sum exactly equal to k.
+    public static int findSubarraySum(int[] arr,
+                                      int n, int sum)
+    {
+ 
+        // HashMap to store number of subarrays
+        // starting from index zero having
+        // particular value of sum.
+        Dictionary<int, int> prevSum = new Dictionary<int, int>();
+ 
+        int res = 0;
+ 
+        // Sum of elements so far
+        int currsum = 0;
+ 
+        for (int i = 0; i < n; i++) {
+ 
+            // Add current element to sum so far.
+            currsum += arr[i];
+ 
+            // If currsum is equal to desired sum,
+            // then a new subarray is found. So
+            // increase count of subarrays.
+            if (currsum == sum)
+                res++;
+ 
+            // currsum exceeds given sum by currsum
+            // - sum. Find number of subarrays having
+            // this sum and exclude those subarrays
+            // from currsum by increasing count by
+            // same amount.
+            if (prevSum.ContainsKey(currsum - sum))
+                res += prevSum[currsum - sum];
+ 
+            // Add currsum value to count of
+            // different values of sum.
+            if (!prevSum.ContainsKey(currsum))
+                prevSum.Add(currsum, 1);
+            else {
+                int count = prevSum[currsum];
+                prevSum[currsum] = count + 1;
+            }
+        }
+        return res;
+    }
+ 
+    // Driver Code
+    public static void Main()
+    {
+        int[] arr = { 10, 2, -2, -20, 10 };
+        int sum = -10;
+        int n = arr.Length;
+        Console.Write(findSubarraySum(arr, n, sum));
+    }
+}
+ 
+// This code is contributed by
+// sanjeev2552
+Javascript
+
+<script>
+// Javascript program to find number of subarrays
+// with sum exactly equal to k.
+     
+    // Function to find number of subarrays
+    // with sum exactly equal to k.
+    function findSubarraySum(arr,n,sum)
+    {
+     
+        // HashMap to store number of subarrays
+        // starting from index zero having
+        // particular value of sum.
+        let prevSum = new Map();
+        let res = 0;
+  
+        // Sum of elements so far.
+        let currsum = 0;
+        for (let i = 0; i < n; i++)
+        {
+  
+            // Add current element to sum so far.
+            currsum += arr[i];
+  
+            // If currsum is equal to desired sum,
+            // then a new subarray is found. So
+            // increase count of subarrays.
+            if (currsum == sum)
+                res++;
+  
+            // currsum exceeds given sum by currsum
+            //  - sum. Find number of subarrays having
+            // this sum and exclude those subarrays
+            // from currsum by increasing count by
+            // same amount.
+            if (prevSum.has(currsum - sum))
+                res += prevSum.get(currsum - sum);
+  
+            // Add currsum value to count of
+            // different values of sum.
+            let count = prevSum.get(currsum);
+            if (count == null)
+                prevSum.set(currsum, 1);
+            else
+                prevSum.set(currsum, count + 1);
+        }
+        return res;
+    }
+     
+    let arr = [10, 2, -2, -20, 10];
+    let sum = -10;
+    let n = arr.length;
+    document.write(findSubarraySum(arr, n, sum));
+     
+    // This code is contributed by avanitrachhadiya2155.
+</script>
+Output: 
+3
+ 
+
+Time Complexity: O(n) 
+Auxiliary Space: O(n)
+
+Attention reader! Don’t stop learning now. Get hold of all the important DSA concepts with the DSA Self Paced Course at a student-friendly price and become industry ready.  To complete your preparation from learning a language to DS Algo and many more,  please refer Complete Interview Preparation Course.
+
+In case you wish to attend live classes with experts, please refer DSA Live Classes for Working Professionals and Competitive Programming Live for Students.

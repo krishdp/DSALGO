@@ -1,0 +1,2 @@
+In this article: https://www.geeksforgeeks.org/find-maximum-product-of-a-triplet-in-array/
+	Search for word: Approach 1 
